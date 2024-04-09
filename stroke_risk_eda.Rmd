@@ -1,0 +1,143 @@
+---
+title: "EDA Project 1"
+author: "Tyler"
+date: "2024-4-09"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+knitr::opts_knit$set(root.dir = "~/")
+```
+
+```{r warning=F, message=F}
+library(tidyverse)
+library(seriation)
+library(tidyquant)
+library(tinytex)
+```
+
+```{r}
+strokes <- read.table("~/strokes.txt", sep = ",", header = T)
+strokes
+```
+```{r}
+df1 <- strokes %>% 
+  separate("Cholesterol.Levels",c('a','HDL','b', 'LDL')) %>% 
+  separate("Blood.Pressure.Levels",c("SYSTOLIC","	DIASTOLIC"))
+
+
+df1 <- df1[, -which(names(df1) %in% c("a","b"))]
+
+df1$HDL <- as.numeric(df1$HDL)
+df1$LDL <- as.numeric(df1$LDL)
+df1$Total.Cholesterol <- df1$HDL + df1$LDL
+```
+
+```{r}
+
+df2 <- df1 %>% 
+ mutate(Diagnosis = ifelse(Diagnosis == "Stroke",1,0))
+
+
+df3 <- df2 %>% 
+ mutate(Stress.Levels = ifelse(Stress.Levels >= 5,"High","low")) %>% 
+  mutate(Total.Cholesterol = ifelse(Total.Cholesterol >= 200,"High","low"))
+
+df3
+
+
+
+
+```
+
+```{r}
+df3 %>% 
+  count(Stroke.History,Diagnosis) %>% 
+  mutate(percentage = (n/sum(n)) %>% scales::percent()) %>% 
+  arrange(desc(n))
+```
+
+```{r}
+df3 %>% 
+  count(Smoking.Status,Diagnosis) %>% 
+  mutate(percentage = (n/sum(n)) %>% scales::percent()) %>% 
+  arrange(desc(n))
+```
+
+
+```{r}
+df3 %>% 
+  count(Dietary.Habits,Diagnosis) %>% 
+  mutate(percentage = (n/sum(n)) %>% scales::percent()) %>% 
+  arrange(desc(n))
+```
+```{r}
+df3 %>% 
+  count(Gender,Diagnosis) %>% 
+  mutate(percentage = (n/sum(n)) %>% scales::percent()) %>% 
+  arrange(desc(n))
+```
+
+```{r}
+df3 %>% 
+  count(Stress.Levels,Diagnosis) %>% 
+  mutate(percentage = (n/sum(n)) %>% scales::percent()) %>% 
+  arrange(desc(n))
+```
+
+```{r}
+df3 %>% 
+  count(Alcohol.Intake,Diagnosis) %>% 
+  mutate(percentage = (n/sum(n)) %>% scales::percent()) %>% 
+  arrange(desc(n))
+
+
+df3 %>% 
+  ggplot() +
+  geom_bar(mapping = aes(x = Alcohol.Intake, fill = Alcohol.Intake))
+```
+
+```{r}
+
+```
+
+
+
+```{r}
+df3 %>% 
+  count(Work.Type,Diagnosis) %>% 
+  mutate(percentage = (n/sum(n)) %>% scales::percent()) %>% 
+  arrange(desc(n))
+```
+
+```{r}
+df3 %>% 
+  count(Work.Type,Physical.Activity,Diagnosis) %>% 
+  mutate(percentage = (n/sum(n)) %>% scales::percent()) %>% 
+  arrange(desc(n))
+```
+
+```{r}
+df3 %>% 
+  count(Smoking.Status,Alcohol.Intake,Diagnosis) %>% 
+  mutate(percentage = (n/sum(n)) %>% scales::percent()) %>% 
+  arrange(desc(n))
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
